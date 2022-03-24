@@ -57,7 +57,6 @@ const updateRepos = async () => {
         echo ".dummyfile" > .dummyfile &&
         git add . &&
         git commit -m "Update Jenkinsfile" &&
-        git pull -X ours origin master --allow-unrelated-histories &&
         git push origin master`;
 
       out = await execShPromise(command1, true);
