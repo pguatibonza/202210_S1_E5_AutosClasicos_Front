@@ -53,7 +53,7 @@ const updateRepos = async () => {
       fs.writeFileSync("sonar-project.properties", sonarFile);
 
       let command1 = `git remote rm origin &&
-        git remote add origin git@github.com:MISW-4104-Web/${project.name}.git &&
+        git remote add origin git@github.com:Uniandes-isis2603/${project.name}.git &&
         git add . &&
         git commit -m "Update Jenkinsfile" &&
         git pull -X ours origin master --allow-unrelated-histories &&
