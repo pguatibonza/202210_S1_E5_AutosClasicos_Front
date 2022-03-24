@@ -3,8 +3,8 @@ const execShPromise = require("exec-sh").promise;
 let fs = require("fs");
 
 const projects = [
-  { name: "202210_S1_E1_OlimpicosInvierno_Front" },
-  /*{ name: "202210_S1_E2_CocinasMundo_Front" },
+  /*{ name: "202210_S1_E1_OlimpicosInvierno_Front" },*/
+  { name: "202210_S1_E2_CocinasMundo_Front" },
   { name: "202210_S1_E3_SitiosTuristicos_Front" },
   { name: "202210_S1_E4_MuseoArteModerno_Front" },
   { name: "202210_S1_E5_AutosClasicos_Front" },
@@ -16,7 +16,7 @@ const projects = [
   { name: "202210_S3_E1_Musica_Front" },
   { name: "202210_S3_E2_Trekking_Front" },
   { name: "202210_S3_E3_DogSpa_Front" },
-  { name: "202210_S3_E4_Kindergarten_Front" },*/
+  { name: "202210_S3_E4_Kindergarten_Front" },
 ];
 
 const createRepos = async () => {
