@@ -3,47 +3,44 @@ const execShPromise = require("exec-sh").promise;
 let fs = require("fs");
 
 const projects = [
-  { name: "202212_Equipo01" },
-  { name: "202212_Equipo02" },
-  { name: "202212_Equipo03" },
-  { name: "202212_Equipo04" },
-  { name: "202212_Equipo05" },
-  { name: "202212_Equipo06" },
-  { name: "202212_Equipo07" },
-  { name: "202212_Equipo08" },
-  { name: "202212_Equipo09" },
-  { name: "202212_Equipo10" },
-  { name: "202212_Equipo11" },
-  { name: "202212_Equipo12" },
-  { name: "202212_Equipo13" },
-  { name: "202212_Equipo14" },
-  { name: "202212_Equipo15" },
-  { name: "202212_Equipo16" },
-  { name: "202212_Equipo17" },
-  { name: "202212_Equipo18" },
-  { name: "202212_Equipo19" },
-  { name: "202212_Equipo20" },
-  { name: "202212_Equipo21" },
-  { name: "202212_Equipo22" },
-  { name: "202212_Equipo23" },
-  { name: "202212_Equipo24" },
-  { name: "202212_Equipo25" },
-  { name: "202212_Equipo26" },
-  { name: "202212_Equipo27" },
-  { name: "202212_Equipo28" },
-  { name: "202212_Equipo29" },
-  { name: "202212_Equipo30" },
-  // { name: "202212_Equipo31" },
-  // { name: "202212_Equipo32" },
-  // { name: "202212_Equipo33" },
-  // { name: "202212_Equipo34" },
-  // { name: "202212_Equipo35" },
-  // { name: "202212_Equipo36" },
-  // { name: "202212_Equipo37" },
-  // { name: "202212_Equipo38" },
-  // { name: "202212_Equipo39" },
-  // { name: "202212_Equipo40" },
+  { name: "202210_S1_E1_OlimpicosInvierno_Front" },
+  /*{ name: "202210_S1_E2_CocinasMundo_Front" },
+  { name: "202210_S1_E3_SitiosTuristicos_Front" },
+  { name: "202210_S1_E4_MuseoArteModerno_Front" },
+  { name: "202210_S1_E5_AutosClasicos_Front" },
+  { name: "202210_S2_E1_MundialesFutbol_Front" },
+  { name: "202210_S2_E2_LigaAjedrez_Front" },
+  { name: "202210_S2_E3_Discomovil_Front" },
+  { name: "202210_S2_E4_ParqueAutomotor_Front" },
+  { name: "202210_S2_E5_Agenda_Front" },
+  { name: "202210_S3_E1_Musica_Front" },
+  { name: "202210_S3_E2_Trekking_Front" },
+  { name: "202210_S3_E3_DogSpa_Front" },
+  { name: "202210_S3_E4_Kindergarten_Front" },*/
 ];
+
+const createRepos = async () => {
+  let out;
+  try {
+    for (const project of projects) {
+      const jenkinsFile = getJenkinsFile(project.name);
+      const sonarFile = getSonarFile(project.name);
+
+      fs.writeFileSync("Jenkinsfile", jenkinsFile);
+      fs.writeFileSync("sonar-project.properties", sonarFile);
+
+      let command1 = `hub create Uniandes-isis2603/${project.name}`;
+      out = await execShPromise(command1, true);
+    }
+  } catch (e) {
+    console.log("Error: ", e);
+    console.log("Stderr: ", e.stderr);
+    console.log("Stdout: ", e.stdout);
+    return e;
+  }
+
+  console.log("out: ", out.stdout, out.stderr);
+};
 
 const updateRepos = async () => {
   let out;
@@ -59,8 +56,9 @@ const updateRepos = async () => {
         git remote add origin git@github.com:MISW-4104-Web/${project.name}.git &&
         git add . &&
         git commit -m "Update Jenkinsfile" &&
-        git fetch origin master &&
-        git merge -s recursive -X ours origin/master`;
+        git pull -X ours origin master --allow-unrelated-histories &&
+        git push origin master`;
+
       out = await execShPromise(command1, true);
     }
   } catch (e) {
@@ -73,10 +71,11 @@ const updateRepos = async () => {
   console.log("out: ", out.stdout, out.stderr);
 };
 
+//createRepos();
 updateRepos();
 
 function getSonarFile(repo) {
-  const content = `sonar.host.url=http://157.253.238.75:8080/sonar-misovirtual/
+  const content = `sonar.host.url=http://157.253.238.75:8080/sonar-isis2603/
   sonar.projectKey=${repo}:sonar
   sonar.projectName=${repo}
   sonar.projectVersion=1.0
@@ -95,8 +94,8 @@ function getJenkinsFile(repo) {
     agent any
     environment {
        GIT_REPO = '${repo}'
-       GIT_CREDENTIAL_ID = '277a9d46-cf19-4119-afd9-4054a7d35151'
-       SONARQUBE_URL = 'http://172.24.100.52:8082/sonar-misovirtual'
+       GIT_CREDENTIAL_ID = 'de5cd571-10da-4034-8ba8-af99beef4b14'
+       SONARQUBE_URL = 'http://172.24.100.52:8082/sonar-isis2603'
     }
     stages {
        stage('Checkout') {
@@ -106,7 +105,7 @@ function getJenkinsFile(repo) {
 
              git branch: 'master',
                 credentialsId: env.GIT_CREDENTIAL_ID,
-                url: 'https://github.com/MISW-4104-Web/' + env.GIT_REPO
+                url: 'https://github.com/Uniandes-isis2603/' + env.GIT_REPO
           }
        }
        stage('Git Analysis') {
@@ -126,8 +125,8 @@ function getJenkinsFile(repo) {
                 sh('git config --global user.name "ci-isis2603"')
                 sh('git add ./reports/index.html')
                 sh('git commit -m "[ci-skip] GitInspector report added"')
-                sh('git pull https://\${GIT_USERNAME}:\${GIT_PASSWORD}@github.com/MISW-4104-Web/\${GIT_REPO} master')
-                sh('git push https://\${GIT_USERNAME}:\${GIT_PASSWORD}@github.com/MISW-4104-Web/\${GIT_REPO} master')
+                sh('git pull https://\${GIT_USERNAME}:\${GIT_PASSWORD}@github.com/Uniandes-isis2603/\${GIT_REPO} master')
+                sh('git push https://\${GIT_USERNAME}:\${GIT_PASSWORD}@github.com/Uniandes-isis2603/\${GIT_REPO} master')
              }
           }
        }
