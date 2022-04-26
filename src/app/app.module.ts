@@ -5,6 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AutoModule } from './Auto/Auto.module';
 
+import { PaisModule } from './pais/pais.module';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -12,7 +14,8 @@ import { AutoModule } from './Auto/Auto.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    AutoModule
+    AutoModule,
+    PaisModule
   ],
   providers: [],
   bootstrap: [AppComponent]
